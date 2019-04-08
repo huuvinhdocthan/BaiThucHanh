@@ -12,6 +12,7 @@ namespace SmallSchool.Models
         public DbSet<Course> Course { get; set; }
         public DbSet<Category> categories { get; set; }
         public object Courese { get; internal set; }
+        public object Courses { get; internal set; }
 
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
