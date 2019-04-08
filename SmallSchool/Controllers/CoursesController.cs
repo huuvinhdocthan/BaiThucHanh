@@ -19,8 +19,13 @@ namespace SmallSchool.Controllers
         // GET: Courses
         [Authorize]
         [HttpPost]
-        public ActionResult Create (CourseViewModel viewModel)
+        public ActionResult Create(CourseViewModel viewModel)
         {
+            if (!ModelState.IsValid)
+            {
+                viewModel.Categories = _dbContext.categories.ToList();
+                return View("Create", viewModel);
+            }
             var course = new Course
             {
                 LecturerId = User.Identity.GetUserId(),
