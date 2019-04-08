@@ -12,6 +12,14 @@ namespace SmallSchool.Controllers
     public class CoursesController : Controller
     {
         public readonly ApplicationDbContext _dbContext;
+        public ActionResult Create()
+        {
+            var viewModel = new CourseViewModel
+            {
+                Categories = _dbContext.categories.ToList()
+            };
+            return View(viewModel);
+        }
         public CoursesController()
         {
             _dbContext = new ApplicationDbContext();

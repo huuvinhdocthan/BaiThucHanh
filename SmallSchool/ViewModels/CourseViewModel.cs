@@ -11,14 +11,15 @@ namespace SmallSchool.ViewModels
     {
         [Required]
         public string Place { get; set; }
-        [Required]
 
+        [Required]
+        [FutureDate]
         public string Date { get; set; }
-        [Required]
 
+        [Required]
         public string Time { get; set; }
-        [Required]
 
+        [Required]
         public byte Category { get; set; }
         public IEnumerable<Category> Categories { get; set; }
         public DateTime GetDateTime()
@@ -26,6 +27,5 @@ namespace SmallSchool.ViewModels
             return DateTime.Parse(string.Format("{0} {1}", Date, Time));
 
         }
-
     }
 }

@@ -7,14 +7,13 @@ using System.Web;
 
 namespace SmallSchool.ViewModels
 {
-    public class FutureDate : ValidationAttribute
+    public class ValidTime : ValidationAttribute
     {
         public override bool IsValid(object value)
         {
             DateTime datetime;
-            var isValid = DateTime.TryParseExact(Convert.ToString(value), "dd/M/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.None, out datetime);
-            return ( isValid && datetime > DateTime.Now);
+            var isValid = DateTime.TryParseExact(Convert.ToString(value), "HH:mm", CultureInfo.CurrentCulture, DateTimeStyles.None, out datetime);
+            return (isValid && datetime > DateTime.Now);
         }
-        
     }
 }

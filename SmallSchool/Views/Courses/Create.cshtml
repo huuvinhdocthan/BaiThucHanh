@@ -1,12 +1,12 @@
 ﻿@model SmallSchool.ViewModels.CourseViewModel
-@using (Html.BeginForm("Create", "Courses"))
-{
+@{
     ViewBag.Title = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Create</h2>
-<form>
+@using (Html.BeginForm("Create", "Courses"))
+{
     <div class="form-group">
         @Html.LabelFor(m => m.Place)
         @Html.TextBoxFor(m => m.Place, new { @class = "Form-control" })
@@ -18,16 +18,18 @@
         @Html.ValidationMessageFor(m => m.Date)
     </div>
     <div class="form-group"></div>
-    @Html.LabelFor(m => m.Time)
-    @Html.TextBoxFor(m => m.Time, new { @class = "Form-control" })
-    @Html.ValidationMessageFor(m => m.Time)
+        @Html.LabelFor(m => m.Time)
+        @Html.TextBoxFor(m => m.Time, new { @class = "Form-control" })
+        @Html.ValidationMessageFor(m => m.Time)
     <div class="form-group">
         @Html.LabelFor(m => m.Category)
         @Html.DropDownListFor(m => m.Category, new SelectList(Model.Categories, "Id", "Name"), "", new { @class = "Form-control" })
         @Html.ValidationMessageFor(m => m.Category)
-
     </div>
     <button type="submit" value="Save" class="btn-primary">Save</button>
-    <div class="form-group"></div>
+}
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval");
+}
 
-</form>
