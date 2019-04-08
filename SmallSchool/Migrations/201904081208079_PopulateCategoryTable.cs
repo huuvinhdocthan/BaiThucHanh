@@ -11,7 +11,6 @@ namespace SmallSchool.Migrations
             Sql("INSERT INTO CATEGORIES (ID, NAME) VALUES (2, 'Bussiness')");
             Sql("INSERT INTO CATEGORIES (ID, NAME) VALUES (3, 'Marketing')");
         }
-        
         public override void Down()
         {
         }

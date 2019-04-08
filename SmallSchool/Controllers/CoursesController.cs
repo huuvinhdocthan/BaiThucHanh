@@ -12,6 +12,8 @@ namespace SmallSchool.Controllers
     public class CoursesController : Controller
     {
         public readonly ApplicationDbContext _dbContext;
+        // GET: Courses
+        [Authorize]
         public ActionResult Create()
         {
             var viewModel = new CourseViewModel
@@ -27,6 +29,7 @@ namespace SmallSchool.Controllers
         // GET: Courses
         [Authorize]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Create(CourseViewModel viewModel)
         {
             if (!ModelState.IsValid)
@@ -41,8 +44,8 @@ namespace SmallSchool.Controllers
                 CategoryID = viewModel.Category,
                 Place = viewModel.Place
             };
-        _dbContext.Course.Add(course); 
-        _dbContext.SaveChanges();
+                _dbContext.Course.Add(course); 
+                _dbContext.SaveChanges();
             return RedirectToAction("Index","Home");
         }
     }
