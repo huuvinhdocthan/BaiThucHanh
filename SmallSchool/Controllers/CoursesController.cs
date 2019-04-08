@@ -1,4 +1,5 @@
 ﻿using SmallSchool.Models;
+using SmallSchool.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,11 @@ namespace SmallSchool.Controllers
         // GET: Courses
         public ActionResult Create ()
         {
-            return View();
+            var viewModel = new CourseViewModel
+            {
+                Categories = _dbContext.categories.ToList()
+            };
+            return View(viewModel);
         }
     }
 }
