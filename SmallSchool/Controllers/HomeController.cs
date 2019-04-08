@@ -22,7 +22,7 @@ namespace SmallSchool.Controllers
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Vinh oc bo ahihi";
+            ViewBag.Message = "our contact page.";
 
             return View();
         }
