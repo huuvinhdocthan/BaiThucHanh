@@ -1,4 +1,5 @@
-﻿using SmallSchool.Models;
+﻿using Microsoft.AspNet.Identity;
+using SmallSchool.Models;
 using SmallSchool.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -14,15 +15,22 @@ namespace SmallSchool.Controllers
         public CoursesController()
         {
             _dbContext = new ApplicationDbContext();
-        }   
+        }
         // GET: Courses
-        public ActionResult Create ()
+        [Authorize]
+        [HttpPost]
+        public ActionResult Create (CourseViewModel viewModel)
         {
-            var viewModel = new CourseViewModel
+            var course = new Course
             {
-                Categories = _dbContext.categories.ToList()
+                LecturerId = User.Identity.GetUserId(),
+                DateTime = viewModel.GetDateTime(),
+                CategoryID = viewModel.Category,
+                Place = viewModel.Place
             };
-            return View(viewModel);
+        _dbContext.Course.Add(course); 
+        _dbContext.SaveChanges();
+            return RedirectToAction("Index","Home");
         }
     }
 }
