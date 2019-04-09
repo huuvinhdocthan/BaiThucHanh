@@ -1,4 +1,4 @@
-﻿using BigSchool.Models;
+﻿using SmallSchool.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
@@ -10,15 +10,15 @@ namespace SmallSchool.Models
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public DbSet<Course> Course { get; set; }
-        public DbSet<Category> categories { get; set; }
-        public object Courese { get; internal set; }
-        public object Courses { get; internal set; }
-
+        public DbSet<Course> Courses { set; get; }
+        public DbSet<Category> Categories { set; get; }
+        public DbSet<Attendance> Attendances { get; set; }
+        public DbSet<Following> Followings { set; get; }
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
         }
+
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
@@ -29,6 +29,17 @@ namespace SmallSchool.Models
                 .HasRequired(a => a.Course)
                 .WithMany()
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(u => u.Followers)
+                .WithRequired(f => f.Followee)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(u => u.Followers)
+                .WithRequired(f => f.Follower)
+                .WillCascadeOnDelete(false);
+
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -1,32 +1,34 @@
-﻿using Microsoft.AspNet.Identity;
-using SmallSchool.Models;
+﻿using SmallSchool.Models;
 using SmallSchool.ViewModels;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace SmallSchool.Controllers
+
+namespace BigSchool.Controllers
 {
     public class CoursesController : Controller
     {
-        public readonly ApplicationDbContext _dbContext;
-        // GET: Courses
-        [Authorize]
-        public ActionResult Create()
-        {
-            var viewModel = new CourseViewModel
-            {
-                Categories = _dbContext.categories.ToList()
-            };
-            return View(viewModel);
-        }
+        private readonly ApplicationDbContext _dbContext;
         public CoursesController()
         {
             _dbContext = new ApplicationDbContext();
         }
         // GET: Courses
+        [Authorize]
+        public ActionResult Create()
+        {
+            var ViewModel = new CourseViewModel
+            {
+                Categories = _dbContext.Categories.ToList(),
+                Heading = "Add Course"
+            };
+            return View(ViewModel);
+        }
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -34,7 +36,7 @@ namespace SmallSchool.Controllers
         {
             if (!ModelState.IsValid)
             {
-                viewModel.Categories = _dbContext.categories.ToList();
+                viewModel.Categories = _dbContext.Categories.ToList();
                 return View("Create", viewModel);
             }
             var course = new Course
@@ -44,9 +46,71 @@ namespace SmallSchool.Controllers
                 CategoryID = viewModel.Category,
                 Place = viewModel.Place
             };
-                _dbContext.Course.Add(course); 
-                _dbContext.SaveChanges();
-            return RedirectToAction("Index","Home");
+            _dbContext.Courses.Add(course);
+            _dbContext.SaveChanges();
+            return RedirectToAction("Index", "Home");
+        }
+        public ActionResult Attending()
+        {
+            var userId = User.Identity.GetUserId();
+            var courses = _dbContext.Attendances
+                .Where(a => a.AttendeeId == userId)
+                .Select(a => a.Course)
+                .Include(l => l.Lecturer)
+                .Include(l => l.Category)
+                .ToList();
+            var viewModel = new ViewModels.CoursesViewModel
+            {
+                UpcommingCourses = courses,
+                ShowAction = User.Identity.IsAuthenticated
+            };
+            return View(viewModel);
+        }
+        [Authorize]
+        public ActionResult Mine()
+        {
+            var userId = User.Identity.GetUserId();
+            var courses = _dbContext.Courses
+                .Where(c => c.LecturerId == userId && c.DateTime > DateTime.Now)
+                .Include(l => l.Lecturer)
+                .Include(c => c.Category)
+                .ToList();
+            return View(courses);
+        }
+        [Authorize]
+        public ActionResult Edit(int id)
+        {
+            var userId = User.Identity.GetUserId();
+            var course = _dbContext.Courses.Single(c => c.ID == id && c.LecturerId == userId);
+            var viewModel = new CourseViewModel
+            {
+                Categories = _dbContext.Categories.ToList(),
+                Date = course.DateTime.ToString("dd/M/yyyy"),
+                Time = course.DateTime.ToString("HH:mm"),
+                Category = course.CategoryID,
+                Place = course.Place,
+                Heading = "Edit Course",
+                ID = course.ID
+            };
+            return View("Create", viewModel);
+        }
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Update(CourseViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                viewModel.Categories = _dbContext.Categories.ToList();
+                return View("Create", viewModel);
+            }
+            var userId = User.Identity.GetUserId();
+            var course = _dbContext.Courses.Single(c => c.ID == viewModel.ID && c.LecturerId == userId);
+            course.Place = viewModel.Place;
+            course.DateTime = viewModel.GetDateTime();
+            course.CategoryID = viewModel.Category;
+            _dbContext.SaveChanges();
+            return RedirectToAction("Index", "Home");
         }
     }
 }
